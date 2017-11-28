@@ -1,0 +1,50 @@
+before_script:
+  - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+
+  # Run ssh-agent (inside the build environment)
+  - eval $(ssh-agent -s)
+
+  # Add the SSH key stored in SSH_PRIVATE_KEY variable to the agent store
+  - ssh-add <(echo "$SSH_PRIVATE_KEY")
+
+ # you will overwrite your user's SSH config.
+  - mkdir -p ~/.ssh
+  - 'echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+
+  - 'echo "Agent pid: $SSH_AGENT_PID"'
+
+  - export DOCKER_IMAGE_NAME="${REGISTRY_DOMAIN}/${REGISTRY_USER}/${CI_PROJECT_NAME}"
+  - export DOCKER_IMAGE="${DOCKER_IMAGE_NAME}:${CI_COMMIT_REF_NAME}.${CI_PIPELINE_ID}"
+
+after_script:
+  - 'echo "Agent pid: $SSH_AGENT_PID"'
+  - ssh-agent -k
+
+build:
+  stage: build
+  tags:
+    - docker
+  script:
+    - docker build -t "${CI_PROJECT_PATH_SLUG}" .
+    - docker tag "${CI_PROJECT_PATH_SLUG}" "${DOCKER_IMAGE}"
+    - docker tag "${CI_PROJECT_PATH_SLUG}" "${DOCKER_IMAGE_NAME}:latest"
+    - 'sed -i "s~^FROM\s.*$~FROM ${DOCKER_IMAGE}~g" debug/Dockerfile'
+    - docker build -t "${CI_PROJECT_PATH_SLUG}-debug" debug/
+    - docker tag "${CI_PROJECT_PATH_SLUG}-debug" "${DOCKER_IMAGE}-debug"
+    - docker tag "${CI_PROJECT_PATH_SLUG}-debug" "${DOCKER_IMAGE_NAME}-debug:latest"
+
+deploy_registry:
+  stage: deploy
+  tags:
+    - docker
+  script:
+    - docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASSWORD" https://${REGISTRY_DOMAIN}
+    - docker push "${DOCKER_IMAGE}"
+    - docker push "${DOCKER_IMAGE_NAME}:latest"
+    - docker push "${DOCKER_IMAGE}-debug"
+    - docker push "${DOCKER_IMAGE_NAME}-debug:latest"
+    - docker logout https://$REGISTRY_DOMAIN
+  environment:
+    name: registry
+    url: https://docker.elementaru.lt
+

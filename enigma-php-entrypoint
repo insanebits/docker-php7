@@ -1,0 +1,17 @@
+#!/bin/sh
+set -e
+
+echo "Configuring listening ports"
+
+sed -i "s/<VirtualHost\s\*:80>/<VirtualHost *:$APACHE_LISTEN>/" /etc/apache2/sites-enabled/000-default.conf
+
+cat /etc/apache2/sites-enabled/000-default.conf
+
+sed -i "s/Listen\s80$/Listen $APACHE_LISTEN/" /etc/apache2/ports.conf
+
+# print Listen value
+cat /etc/apache2/ports.conf
+
+echo "Starting apache"
+
+exec "$@"
