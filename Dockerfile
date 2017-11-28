@@ -9,7 +9,7 @@ RUN docker-php-source extract \
    libpng12-dev \
    curl \
    mysql-client \
-&& docker-php-ext-install -j$(nproc) iconv mcrypt  mysql mysqli pdo pdo_mysql  \
+&& docker-php-ext-install -j$(nproc) iconv mcrypt mysqli pdo pdo_mysql  \
 && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
 && docker-php-ext-install -j$(nproc) gd \
 && a2enmod rewrite \
