@@ -40,6 +40,7 @@ deploy_registry:
   script:
     - docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASSWORD" https://${REGISTRY_DOMAIN}
     - docker push "${DOCKER_IMAGE}"
+    - docker push "${DOCKER_IMAGE_NAME}"
     - docker push "${DOCKER_IMAGE_NAME}:latest"
     - docker push "${DOCKER_IMAGE}-debug"
     - docker push "${DOCKER_IMAGE_NAME}-debug:latest"
