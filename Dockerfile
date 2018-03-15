@@ -13,7 +13,8 @@ RUN docker-php-source extract \
 && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
 && docker-php-ext-install -j$(nproc) gd \
 && a2enmod rewrite \
-&& docker-php-source delete
+&& docker-php-source delete \
+&& curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 COPY enigma-php-* /usr/local/bin/
 
