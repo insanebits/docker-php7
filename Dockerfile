@@ -1,4 +1,4 @@
-FROM php:7.0-apache
+FROM php:7.1-apache
 
 RUN docker-php-source extract \
 && apt-get update  \
@@ -6,7 +6,7 @@ RUN docker-php-source extract \
    libfreetype6-dev \
    libjpeg62-turbo-dev \
    libmcrypt-dev \
-   libpng12-dev \
+   libpng-dev \
    curl \
    mysql-client \
    zip \
