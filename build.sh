@@ -16,6 +16,6 @@ docker build -t "$tag" .
 for type in debug; do
   echo "Building $type"
   cd "$type"
-  sed -i "s~^FROM\s.*$~FROM $tag~g" Dockerfile
+  sed -i .bak "s~^FROM\s.*$~FROM $tag~g" Dockerfile
   docker build -t "${tag}-${type}" .
 done

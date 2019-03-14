@@ -6,6 +6,7 @@ RUN docker-php-source extract \
    libfreetype6-dev \
    libjpeg62-turbo-dev \
    libmcrypt-dev \
+   libpng-dev \
    curl \
    mysql-client \
    zip \
