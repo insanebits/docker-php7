@@ -4,7 +4,7 @@ version=$1
 
 set -e
 
-image="enigma/php56"
+image="enigma/php71"
 
 tag="${image}:${version}"
 
