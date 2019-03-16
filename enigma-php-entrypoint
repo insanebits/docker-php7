@@ -7,6 +7,10 @@ sed -i "s/<VirtualHost\s\*:80>/<VirtualHost *:$APACHE_LISTEN>/" /etc/apache2/sit
 
 cat /etc/apache2/sites-enabled/000-default.conf
 
+if [ ! -z "$APACHE_DOCUMENT_ROOT" ]; then
+   sed -i "s~DocumentRoot.*$~DocumentRoot $APACHE_DOCUMENT_ROOT~" /etc/apache2/sites-enabled/000-default.conf
+fi
+
 sed -i "s/Listen\s80$/Listen $APACHE_LISTEN/" /etc/apache2/ports.conf
 
 # print Listen value
